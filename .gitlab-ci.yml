@@ -1,0 +1,18 @@
+stages:
+  - deploy
+
+variables:
+  DOCKER_HOST: tcp://localhost:2375/
+  DOCKER_DRIVER: overlay2
+  APP_NAME: kibana
+  NAMESPACE: elasticsearch
+
+deploy:
+  stage: deploy
+  image: private.registry/alpine/helm:3.11.2
+  script:
+    - export KUBECONFIG=/config.yaml
+    - helm upgrade ${APP_NAME} ./ --values=./values.yaml --namespace ${NAMESPACE}
+  only:
+    changes:
+      - values.yaml
